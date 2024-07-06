@@ -92,10 +92,7 @@ async def stop(ctx):
         debate_active = False
         if countdown_task:
             countdown_task.cancel()
-        await ctx.send("フェーズが中断されました。次のフェーズを開始するには !start コマンドを使用してください。")
-        current_phase_index += 1
-        if current_phase_index < len(phases):
-            await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
+        await ctx.send("フェーズが中断されました。現在のフェーズを最初から開始するには !start コマンドを使用してください。次のフェーズに進むには !next コマンドを使用してください。")
 
 @bot.command(name='next', aliases=['n'])
 async def next_phase(ctx):
@@ -188,10 +185,6 @@ async def countdown(ctx, message, seconds: int):
     if debate_active:
         await ctx.send("フェーズが終了しました。次のフェーズを開始するには !start コマンドを使用してください。")
         debate_active = False
-        current_phase_index += 1
-        if current_phase_index < len(phases):
-            await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
-
 
 def create_embed(title, description):
     embed = discord.Embed(title=title, description=description, color=discord.Color.blue())
