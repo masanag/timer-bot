@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
+import time
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
@@ -169,14 +170,20 @@ async def display_phase(ctx):
 
 async def countdown(ctx, seconds: int):
     global current_phase_index, debate_active
+    start_time = time.time()
     while seconds and debate_active:
         await asyncio.sleep(1)
-        seconds -= 1
-        await ctx.send(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()} - 残り時間: {seconds}秒", delete_after=1)
-        if seconds == 60:
+        elapsed_time = time.time() - start_time
+        remaining_time = int(seconds - elapsed_time)
+        if remaining_time < 0:
+            remaining_time = 0
+        await ctx.send(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()} - 残り時間: {remaining_time}秒", delete_after=1)
+        if remaining_time == 60:
             await ctx.send("残り1分です。")
-        elif seconds == 30:
+        elif remaining_time == 30:
             await ctx.send("残り30秒です。")
+        if remaining_time <= 0:
+            break
     if debate_active:
         await ctx.send("フェーズが終了しました。次のフェーズを開始するには !start コマンドを使用してください。")
         debate_active = False
