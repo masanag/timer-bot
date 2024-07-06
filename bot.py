@@ -25,6 +25,33 @@ phase_times = [default_time] * len(phases)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("コマンドが見つかりませんでした。!help_debate を使用して利用可能なコマンドを確認してください。")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("必要な引数が欠けています。コマンドの使用方法を確認してください。\n" + get_help_message())
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("無効な引数が提供されました。コマンドの使用方法を確認してください。\n" + get_help_message())
+    else:
+        await ctx.send("エラーが発生しました。コマンドの使用方法を確認してください。\n" + get_help_message())
+
+def get_help_message():
+    return """
+    **利用可能なコマンド**
+    `!names <肯定側名> <否定側名>` - 肯定側と否定側の名前を設定します。
+    `!times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。1つの引数で全フェーズに同じ時間を設定します。
+    `!start` - ディベートを開始します。
+    `!stop` - 現在のフェーズを中断します。
+    `!next` - 次のフェーズに進みます。
+    `!prev` - 前のフェーズに戻ります。
+    `!end` - ディベートを終了します。
+    `!settings` - 現在の設定を表示します。
+    `!flow` - ディベートの全体の流れを表示します。
+    `!current` - 現在のフェーズを表示します。
+    `!help_debate` - このヘルプメッセージを表示します。
+    """
+
 @bot.command(name='names')
 async def set_names(ctx, affirmative: str, negative: str):
     global affirmative_name, negative_name
@@ -114,7 +141,7 @@ async def show_flow(ctx):
         if i < current_phase_index:
             status = "<-- done"
         elif i == current_phase_index:
-            status = "<--- Now"
+            status = "<--- Now or Next"
         flow_message += f"{i + 1}. {phase}: {speaker} - {phase_times[i]}秒 {status}\n"
     await ctx.send(flow_message)
 
@@ -157,22 +184,9 @@ async def countdown(ctx, seconds: int):
         if current_phase_index < len(phases):
             await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
 
-@bot.command(name='help_debate')
+@bot.command(name='help_debate', aliases=['debate', 'hd', 'dh'])
 async def help_debate(ctx):
-    help_message = """
-    **利用可能なコマンド**
-    `!names <肯定側名> <否定側名>` - 肯定側と否定側の名前を設定します。
-    `!times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。1つの引数で全フェーズに同じ時間を設定します。
-    `!start` - ディベートを開始します。
-    `!stop` - 現在のフェーズを中断します。
-    `!next` - 次のフェーズに進みます。
-    `!prev` - 前のフェーズに戻ります。
-    `!end` - ディベートを終了します。
-    `!settings` - 現在の設定を表示します。
-    `!flow` - ディベートの全体の流れを表示します。
-    `!current` - 現在のフェーズを表示します。
-    `!help_debate` - このヘルプメッセージを表示します。
-    """
+    help_message = get_help_message()
     await ctx.send(help_message)
 
 bot.run(TOKEN)
