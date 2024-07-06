@@ -128,15 +128,16 @@ async def end_debate(ctx):
 @bot.command(name='settings')
 async def show_settings(ctx):
     settings_message = f"""
-    **現在の設定**
-    肯定側: {affirmative_name}
-    否定側: {negative_name}
-    フェーズの時間:
-        - 立論: {phase_times[0]}秒
-        - 反対尋問: {phase_times[1]}秒
-        - 反駁: {phase_times[4]}秒
-        - 最終弁論: {phase_times[6]}秒
-    """
+**現在の設定**
+- ディベート参加者:
+  - 肯定側: {affirmative_name}
+  - 否定側: {negative_name}
+- フェーズ時間:
+  - 立論　　: {phase_times[0]}秒
+  - 反対尋問: {phase_times[1]}秒
+  - 反駁　　: {phase_times[4]}秒
+  - 最終弁論: {phase_times[6]}秒
+"""
     await ctx.send(settings_message)
 
 @bot.command(name='flow', aliases=['f'])
