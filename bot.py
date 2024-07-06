@@ -78,11 +78,12 @@ async def set_phase_times(ctx, *times: int):
 @bot.command(name='start')
 async def start(ctx):
     global current_phase_index, debate_active, countdown_task
-    if not debate_active:
-        debate_active = True
-        countdown_task = asyncio.create_task(display_phase(ctx))
-    else:
-        await ctx.send("ディベートが既に開始されています。")
+    if debate_active and countdown_task:
+        countdown_task.cancel()
+    debate_active = True
+    embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {phase_times[current_phase_index]}秒")
+    message = await ctx.send(embed=embed)
+    countdown_task = asyncio.create_task(countdown(ctx, message, phase_times[current_phase_index]))
 
 @bot.command(name='stop')
 async def stop(ctx):
@@ -98,7 +99,9 @@ async def stop(ctx):
 
 @bot.command(name='next')
 async def next_phase(ctx):
-    global current_phase_index
+    global current_phase_index, countdown_task
+    if countdown_task:
+        countdown_task.cancel()
     if current_phase_index < len(phases) - 1:
         current_phase_index += 1
         await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
@@ -107,7 +110,9 @@ async def next_phase(ctx):
 
 @bot.command(name='prev')
 async def previous_phase(ctx):
-    global current_phase_index
+    global current_phase_index, countdown_task
+    if countdown_task:
+        countdown_task.cancel()
     if current_phase_index > 0:
         current_phase_index -= 1
         await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
@@ -117,9 +122,9 @@ async def previous_phase(ctx):
 @bot.command(name='end')
 async def end_debate(ctx):
     global current_phase_index, debate_active, countdown_task
-    debate_active = False
     if countdown_task:
         countdown_task.cancel()
+    debate_active = False
     current_phase_index = 0
     await ctx.send("ディベートが終了しました。")
 
@@ -160,24 +165,17 @@ def get_current_speaker():
     else:
         return negative_name
 
-async def display_phase(ctx):
-    global current_phase_index, debate_active
-    if debate_active:
-        await ctx.send(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()} - 残り時間: {phase_times[current_phase_index]}秒")
-        await countdown(ctx, phase_times[current_phase_index])
-    else:
-        await ctx.send("ディベートがアクティブではありません。")
-
-async def countdown(ctx, seconds: int):
+async def countdown(ctx, message, seconds: int):
     global current_phase_index, debate_active
     start_time = time.time()
-    while seconds and debate_active:
-        await asyncio.sleep(1)
+    while seconds > 0 and debate_active:
         elapsed_time = time.time() - start_time
         remaining_time = int(seconds - elapsed_time)
-        if remaining_time < 0:
+        if remaining_time <= 0:
             remaining_time = 0
-        await ctx.send(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()} - 残り時間: {remaining_time}秒", delete_after=1)
+        embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {remaining_time}秒")
+        await message.edit(embed=embed)
+        await asyncio.sleep(1)
         if remaining_time == 60:
             await ctx.send("残り1分です。")
         elif remaining_time == 30:
@@ -190,6 +188,10 @@ async def countdown(ctx, seconds: int):
         current_phase_index += 1
         if current_phase_index < len(phases):
             await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
+
+def create_embed(title, description):
+    embed = discord.Embed(title=title, description=description, color=discord.Color.blue())
+    return embed
 
 @bot.command(name='help_debate', aliases=['debate', 'hd', 'dh'])
 async def help_debate(ctx):
