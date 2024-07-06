@@ -1,2 +1,2 @@
-web: python -m http.server 8080
+web: python web_server.py
 worker: python bot.py
