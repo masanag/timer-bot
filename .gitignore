@@ -28,6 +28,11 @@
 .env.test
 .env.production
 
+# Ignore IDE and editor files
+__pycache__/
+*.pyc
+*.pro.user
+
 # Ignore operating system files
 .DS_Store
 Thumbs.db
