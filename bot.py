@@ -3,6 +3,8 @@ from discord.ext import commands
 import asyncio
 import os
 import time
+import json
+import random
 from keep_alive import keep_alive
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
@@ -17,11 +19,18 @@ current_phase_index = 0
 debate_active = False
 countdown_task = None
 
+current_topic = ""  # グローバル変数として論題を保持
+
 affirmative_name = ""
 negative_name = ""
 
 default_time = 120
 phase_times = [default_time] * len(phases)
+
+# JSONファイルから論題を読み込む
+with open("topics.json", "r") as file:
+    data = json.load(file)
+    topics = data["topics"]
 
 @bot.event
 async def on_ready():
@@ -51,6 +60,11 @@ def get_help_message():
     `!settings` - 現在の設定を表示します。
     `!flow` - ディベートの全体の流れを表示します。エイリアス: !f
     `!current` - 現在のフェーズを表示します。エイリアス: !c
+    `!suggest` - ランダムに5つの論題を提案します。エイリアス: !st, !topics, !tp
+    `!addtopic <論題>` - 新しい論題を追加します。エイリアス: !add, !newtopic
+    `!removetopic <論題>` - 既存の論題を削除します。エイリアス: !remove, !deletetopic
+    `!showtopics` - 現在の論題リストを表示します。エイリアス: !alltopics, !listtopics
+    `!settopic <論題>` - 現在の論題を設定します。
     `!help_debate` - このヘルプメッセージを表示します。エイリアス: !h, !debate, !hd, !dh
     """
 
@@ -75,6 +89,61 @@ async def set_phase_times(ctx, *times: int):
         await ctx.send(f"フェーズの時間を設定しました: {phase_times}")
     else:
         await ctx.send(f"各フェーズの時間を設定してください。例: !times {default_time} または !times 120 120 120 120")
+
+@bot.command(name='suggest', aliases=['st', 'topics', 'tp'])
+async def suggest_topics(ctx):
+    # topics.jsonから論題を読み込む
+    with open('topics.json', 'r') as file:
+        topics = json.load(file)['topics']
+
+    # ランダムに5つの論題を選択
+    selected_topics = random.sample(topics, 5)
+
+    # 選択された論題をメッセージとして送信
+    message = "**提案された論題**\n" + "\n".join(f"- {topic}" for topic in selected_topics)
+    await ctx.send(message)
+
+# current_topicを設定するコマンド
+@bot.command(name='settopic')
+async def set_current_topic(ctx, *, topic):
+    global current_topic
+    current_topic = topic
+    await ctx.send(f"論題を「{topic}」に設定しました。")
+
+# 論題を追加するコマンド
+@bot.command(name='addtopic', aliases=['add', 'newtopic'])
+async def add_topic(ctx, *, topic):
+    with open('topics.json', 'r+') as file:
+        data = json.load(file)
+        data['topics'].append(topic)
+        file.seek(0)
+        json.dump(data, file, indent=4)
+    await ctx.send(f"論題「{topic}」を追加しました。")
+
+@bot.command(name='removetopic', aliases=['remove', 'deletetopic'])
+async def remove_topic(ctx, *, topic):
+    with open('topics.json', 'r+') as file:
+        data = json.load(file)
+        if topic in data['topics']:
+            data['topics'].remove(topic)
+            file.seek(0)
+            file.truncate()
+            json.dump(data, file, indent=4)
+            await ctx.send(f"論題「{topic}」を削除しました。")
+        else:
+            await ctx.send(f"論題「{topic}」は見つかりませんでした。")
+
+@bot.command(name='showtopics', aliases=['alltopics', 'listtopics'])
+async def show_topics(ctx):
+    with open('topics.json', 'r') as file:
+        data = json.load(file)
+        topics = data['topics']
+        if topics:
+            topics_list = '\n'.join(f"- {topic}" for topic in topics)
+            await ctx.send(f"# 論題リスト:\n{topics_list}")
+        else:
+            await ctx.send("論題がありません。")
+
 
 @bot.command(name='start')
 async def start(ctx):
@@ -130,6 +199,7 @@ async def end_debate(ctx):
 async def show_settings(ctx):
     settings_message = f"""
 **現在の設定**
+- 論題: {current_topic}
 - ディベート参加者:
   - 肯定側: {affirmative_name}
   - 否定側: {negative_name}
@@ -143,7 +213,7 @@ async def show_settings(ctx):
 
 @bot.command(name='flow', aliases=['f'])
 async def show_flow(ctx):
-    flow_message = f"**ディベートの流れ**\n"
+    flow_message = f"**ディベートの流れ**\n論題: {current_topic}\n"
     for i, phase in enumerate(phases):
         speaker = affirmative_name if "肯定側" in phase else negative_name
         status = ""
