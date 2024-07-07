@@ -3,6 +3,7 @@ from discord.ext import commands
 import asyncio
 import os
 import time
+from keep_alive import keep_alive
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
@@ -200,4 +201,5 @@ async def help_debate(ctx):
     help_message = get_help_message()
     await ctx.send(help_message)
 
+keep_alive()
 bot.run(TOKEN)
