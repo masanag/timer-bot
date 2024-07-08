@@ -50,29 +50,34 @@ async def on_command_error(ctx, error):
 def get_help_message():
     return """
     **利用可能なコマンド**
-    `!names <肯定側名> <否定側名>` - 肯定側と否定側の名前を設定します。
-    `!times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。エイリアス: !t
+    `!names <肯定側名> <否定側名> [ランダム化 (オプション)]` - 肯定側と否定側の名前を設定します。オプションの第三引数に1、true、y、yesを入力するとランダム化が行われます。
+    `!t, !times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。
     `!start` - ディベートを開始します。
     `!stop` - 現在のフェーズを中断します。
-    `!next` - 次のフェーズに進みます。エイリアス: !n
-    `!prev` - 前のフェーズに戻ります。エイリアス: !p
+    `!n, !next` - 次のフェーズに進みます。
+    `!p, !prev` - 前のフェーズに戻ります。
     `!end` - ディベートを終了します。
     `!settings` - 現在の設定を表示します。
-    `!flow` - ディベートの全体の流れを表示します。エイリアス: !f
-    `!current` - 現在のフェーズを表示します。エイリアス: !c
-    `!suggest` - ランダムに5つの論題を提案します。エイリアス: !st, !topics, !tp
-    `!addtopic <論題>` - 新しい論題を追加します。エイリアス: !add, !newtopic
-    `!removetopic <論題>` - 既存の論題を削除します。エイリアス: !remove, !deletetopic
-    `!showtopics` - 現在の論題リストを表示します。エイリアス: !alltopics, !listtopics
+    `!f, !flow` - ディベートの全体の流れを表示します。
+    `!c, !current` - 現在のフェーズを表示します。
+    `!st, !topics, !tp, !suggest` - ランダムに5つの論題を提案します。
+    `!add, !newtopic, !addtopic <論題>` - 新しい論題を追加します。
+    `!remove, !deletetopic, !removetopic <論題>` - 既存の論題を削除します。
+    `!alltopics, !listtopics, !showtopics` - 現在の論題リストを表示します。
     `!settopic <論題>` - 現在の論題を設定します。
-    `!help_debate` - このヘルプメッセージを表示します。エイリアス: !h, !debate, !hd, !dh
+    `!h, !debate, !hd, !dh, !help_debate` - このヘルプメッセージを表示します。
     """
 
 @bot.command(name='names')
-async def set_names(ctx, affirmative: str, negative: str):
+async def set_names(ctx, affirmative: str, negative: str, randomize: str = None):
     global affirmative_name, negative_name
-    affirmative_name = affirmative
-    negative_name = negative
+    if randomize and randomize.lower() in ["1", "true", "yes", "y"]:
+        names = [affirmative, negative]
+        random.shuffle(names)
+        affirmative_name, negative_name = names
+    else:
+        affirmative_name = affirmative
+        negative_name = negative
     await ctx.send(f"肯定側: {affirmative_name}, 否定側: {negative_name}")
 
 @bot.command(name='times', aliases=['t'])
