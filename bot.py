@@ -85,7 +85,7 @@ async def set_phase_times(ctx, *times: int):
     global phase_times
     if len(times) == 1:
         phase_times = [times[0]] * len(phases)
-        await ctx.send(f"すべてのフェーズの時間を {times[0]} 秒に設定しました。")
+        await ctx.send(f"すべてのフェーズの時間を {times[0]} 秒に設定したにゃー")
     elif len(times) == 4:
         phase_times = [
             times[0], times[1], times[0], times[1],
@@ -105,7 +105,7 @@ async def suggest_topics(ctx):
     selected_topics = random.sample(topics, 5)
 
     # 選択された論題をメッセージとして送信
-    message = "**提案された論題**\n" + "\n".join(f"- {topic}" for topic in selected_topics)
+    message = "論題を提案するにゃー: \n" + "\n".join(f"- {topic}" for topic in selected_topics)
     await ctx.send(message)
 
 # current_topicを設定するコマンド
@@ -178,7 +178,7 @@ async def next_phase(ctx):
         current_phase_index += 1
         await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
     else:
-        await ctx.send("これが最後のフェーズです。")
+        await ctx.send("これが最後のフェーズだにゃー")
 
 @bot.command(name='prev', aliases=['p'])
 async def previous_phase(ctx):
@@ -189,7 +189,7 @@ async def previous_phase(ctx):
         current_phase_index -= 1
         await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
     else:
-        await ctx.send("これが最初のフェーズです。")
+        await ctx.send("これが最初のフェーズだにゃー")
 
 @bot.command(name='end')
 async def end_debate(ctx):
