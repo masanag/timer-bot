@@ -78,7 +78,11 @@ async def set_names(ctx, affirmative: str, negative: str, randomize: str = None)
     else:
         affirmative_name = affirmative
         negative_name = negative
-    await ctx.send(f"肯定側: {affirmative_name}, 否定側: {negative_name}")
+    await ctx.send(f"""
+# ディベート参加者:
+- 肯定側: {affirmative_name}
+- 否定側: {negative_name}
+""")
 
 @bot.command(name='times', aliases=['t'])
 async def set_phase_times(ctx, *times: int):
@@ -91,9 +95,15 @@ async def set_phase_times(ctx, *times: int):
             times[0], times[1], times[0], times[1],
             times[2], times[2], times[3], times[3]
         ]
-        await ctx.send(f"フェーズの時間を設定したにゃー: {phase_times}")
+        await ctx.send(f"""
+# フェーズの時間を設定したにゃー:
+- 立論　　: {times[0]}秒
+- 反対尋問: {times[1]}秒
+- 反駁　　: {times[2]}秒
+- 最終弁論: {times[3]}秒
+""")
     else:
-        await ctx.send(f"各フェーズの時間を設定してにゃー 例: !times {default_time} または !times 120 120 120 120")
+        await ctx.send(f"各フェーズの時間を設定してくれにゃー 例: !times {default_time} または !times 120 120 120 120")
 
 @bot.command(name='suggest', aliases=['st', 'topics', 'tp'])
 async def suggest_topics(ctx):
@@ -203,7 +213,7 @@ async def end_debate(ctx):
 @bot.command(name='settings')
 async def show_settings(ctx):
     settings_message = f"""
-**現在の設定**
+# 現在の設定
 - 論題: {current_topic}
 - ディベート参加者:
   - 肯定側: {affirmative_name}
@@ -264,7 +274,7 @@ async def countdown(ctx, message, seconds: int):
     except asyncio.CancelledError:
         pass  # タイマーがキャンセルされた場合は何もしない
     if debate_active:
-        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使用してくださいにゃー。")
+        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使うにゃー。")
         debate_active = False
 
 def create_embed(title, description):
