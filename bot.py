@@ -91,9 +91,9 @@ async def set_phase_times(ctx, *times: int):
             times[0], times[1], times[0], times[1],
             times[2], times[2], times[3], times[3]
         ]
-        await ctx.send(f"フェーズの時間を設定しました: {phase_times}")
+        await ctx.send(f"フェーズの時間を設定したにゃー: {phase_times}")
     else:
-        await ctx.send(f"各フェーズの時間を設定してください。例: !times {default_time} または !times 120 120 120 120")
+        await ctx.send(f"各フェーズの時間を設定してにゃー 例: !times {default_time} または !times 120 120 120 120")
 
 @bot.command(name='suggest', aliases=['st', 'topics', 'tp'])
 async def suggest_topics(ctx):
@@ -113,7 +113,7 @@ async def suggest_topics(ctx):
 async def set_current_topic(ctx, *, topic):
     global current_topic
     current_topic = topic
-    await ctx.send(f"論題を「{topic}」に設定しました。")
+    await ctx.send(f"論題を「{topic}」に設定したにゃー")
 
 # 論題を追加するコマンド
 @bot.command(name='addtopic', aliases=['add', 'newtopic'])
@@ -123,7 +123,7 @@ async def add_topic(ctx, *, topic):
         data['topics'].append(topic)
         file.seek(0)
         json.dump(data, file, indent=4)
-    await ctx.send(f"論題「{topic}」を追加しました。")
+    await ctx.send(f"論題「{topic}」を追加したにゃー")
 
 @bot.command(name='removetopic', aliases=['remove', 'deletetopic'])
 async def remove_topic(ctx, *, topic):
@@ -134,7 +134,7 @@ async def remove_topic(ctx, *, topic):
             file.seek(0)
             file.truncate()
             json.dump(data, file, indent=4)
-            await ctx.send(f"論題「{topic}」を削除しました。")
+            await ctx.send(f"論題「{topic}」を削除したにゃー")
         else:
             await ctx.send(f"論題「{topic}」は見つかりませんでした。")
 
@@ -198,7 +198,7 @@ async def end_debate(ctx):
         countdown_task.cancel()
     debate_active = False
     current_phase_index = 0
-    await ctx.send("ディベートが終了しました。")
+    await ctx.send("ディベートが終了したにゃー")
 
 @bot.command(name='settings')
 async def show_settings(ctx):
@@ -264,7 +264,7 @@ async def countdown(ctx, message, seconds: int):
     except asyncio.CancelledError:
         pass  # タイマーがキャンセルされた場合は何もしない
     if debate_active:
-        await ctx.send("フェーズが終了しました。次のフェーズを開始するには !start コマンドを使用してください。")
+        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使用してくださいにゃー。")
         debate_active = False
 
 def create_embed(title, description):
