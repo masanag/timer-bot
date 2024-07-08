@@ -49,23 +49,23 @@ async def on_command_error(ctx, error):
 
 def get_help_message():
     return """
-    **利用可能なコマンド**
-    `!names <肯定側名> <否定側名> [ランダム化 (オプション)]` - 肯定側と否定側の名前を設定します。オプションの第三引数に1、true、y、yesを入力するとランダム化が行われます。
-    `!t, !times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。
-    `!start` - ディベートを開始します。
-    `!stop` - 現在のフェーズを中断します。
-    `!n, !next` - 次のフェーズに進みます。
-    `!p, !prev` - 前のフェーズに戻ります。
-    `!end` - ディベートを終了します。
-    `!settings` - 現在の設定を表示します。
-    `!f, !flow` - ディベートの全体の流れを表示します。
-    `!c, !current` - 現在のフェーズを表示します。
-    `!st, !topics, !tp, !suggest` - ランダムに5つの論題を提案します。
-    `!add, !newtopic, !addtopic <論題>` - 新しい論題を追加します。
-    `!remove, !deletetopic, !removetopic <論題>` - 既存の論題を削除します。
-    `!alltopics, !listtopics, !showtopics` - 現在の論題リストを表示します。
-    `!settopic <論題>` - 現在の論題を設定します。
-    `!h, !debate, !hd, !dh, !help_debate` - このヘルプメッセージを表示します。
+    # 利用可能なコマンド
+    - `!names <肯定側名> <否定側名> [ランダム化 (オプション)]` - 肯定側と否定側の名前を設定します。オプションの第三引数に1、true、y、yesを入力するとランダム化が行われます。
+    - `!t, !times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。
+    - `!start` - ディベートを開始します。
+    - `!stop` - 現在のフェーズを中断します。
+    - `!n, !next` - 次のフェーズに進みます。
+    - `!p, !prev` - 前のフェーズに戻ります。
+    - `!end` - ディベートを終了します。
+    - `!settings` - 現在の設定を表示します。
+    - `!f, !flow` - ディベートの全体の流れを表示します。
+    - `!c, !current` - 現在のフェーズを表示します。
+    - `!st, !topics, !tp, !suggest` - ランダムに5つの論題を提案します。
+    - `!add, !newtopic, !addtopic <論題>` - 新しい論題を追加します。
+    - `!remove, !deletetopic, !removetopic <論題>` - 既存の論題を削除します。
+    - `!alltopics, !listtopics, !showtopics` - 現在の論題リストを表示します。
+    - `!settopic <論題>` - 現在の論題を設定します。
+    - `!h, !debate, !hd, !dh, !help_debate` - このヘルプメッセージを表示します。
     """
 
 @bot.command(name='names')
@@ -228,7 +228,7 @@ async def show_settings(ctx):
 
 @bot.command(name='flow', aliases=['f'])
 async def show_flow(ctx):
-    flow_message = f"**ディベートの流れ**\n論題: {current_topic}\n"
+    flow_message = f"# ディベートの流れ\n- 論題: {current_topic}\n"
     for i, phase in enumerate(phases):
         speaker = affirmative_name if "肯定側" in phase else negative_name
         status = ""
@@ -242,7 +242,7 @@ async def show_flow(ctx):
 @bot.command(name='current', aliases=['c'])
 async def current_phase(ctx):
     if current_phase_index < len(phases):
-        phase_message = f"**現在のフェーズ**\nフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - 残り時間: {phase_times[current_phase_index]}秒"
+        phase_message = f"# 現在のフェーズ\n- フェーズ: {phases[current_phase_index]}\n - {get_current_speaker()} - 残り時間: {phase_times[current_phase_index]}秒"
     else:
         phase_message = "現在進行中のフェーズはありません。"
     await ctx.send(phase_message)
