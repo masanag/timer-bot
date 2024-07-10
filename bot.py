@@ -216,13 +216,13 @@ async def show_settings(ctx):
 # 現在の設定
 - 論題: {current_topic}
 - ディベート参加者:
-  - 肯定側: {affirmative_name}
-  - 否定側: {negative_name}
+    - 肯定側: {affirmative_name}
+    - 否定側: {negative_name}
 - フェーズ時間:
-  - 立論　　: {phase_times[0]}秒
-  - 反対尋問: {phase_times[1]}秒
-  - 反駁　　: {phase_times[4]}秒
-  - 最終弁論: {phase_times[6]}秒
+    - 立論　　: {phase_times[0]}秒
+    - 反対尋問: {phase_times[1]}秒
+    - 反駁　　: {phase_times[4]}秒
+    - 最終弁論: {phase_times[6]}秒
 """
     await ctx.send(settings_message)
 
