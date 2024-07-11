@@ -52,6 +52,7 @@ def get_help_message():
     # 利用可能なコマンド
     - `!names <肯定側名> <否定側名> [ランダム化 (オプション)]` - 肯定側と否定側の名前を設定します。オプションの第三引数に1、true、y、yesを入力するとランダム化が行われます。
     - `!t, !times <時間1> <時間2> ... <時間4>` - 各フェーズの時間を設定します。
+    - !prepare <時間> - 立論準備のタイマーを開始します。
     - `!start` - ディベートを開始します。
     - `!stop` - 現在のフェーズを中断します。
     - `!n, !next` - 次のフェーズに進みます。
@@ -265,6 +266,36 @@ async def countdown(ctx, message, seconds: int):
             embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {remaining_time}秒")
             await message.edit(embed=embed)
             await asyncio.sleep(1)
+            if remaining_time == 60:
+                await ctx.send("残り1分です。")
+            elif remaining_time == 30:
+                await ctx.send("残り30秒です。")
+            if remaining_time <= 0:
+                break
+    except asyncio.CancelledError:
+        pass  # タイマーがキャンセルされた場合は何もしない
+    if debate_active:
+        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使うにゃー。")
+        debate_active = False
+@bot.command()
+async def prepare(ctx, seconds: int):
+    # prepare_timer関数を呼び出す
+    await prepare_timer(ctx, seconds)
+
+async def prepare_timer(ctx, seconds: int):
+    global current_phase_index, debate_active
+    debate_active = True  # debate_activeをTrueに設定
+    start_time = time.time()
+    message = await ctx.send(embed=create_embed("立論準備", f"残り{seconds}秒"))
+    try:
+        while seconds > 0 and debate_active:
+            await asyncio.sleep(1)  # 1秒待機
+            elapsed_time = time.time() - start_time
+            remaining_time = int(seconds - elapsed_time)
+            if remaining_time <= 0:
+                remaining_time = 0
+            embed = create_embed(f"立論準備", f"残り時間: {remaining_time}秒")
+            await message.edit(embed=embed)
             if remaining_time == 60:
                 await ctx.send("残り1分です。")
             elif remaining_time == 30:
