@@ -305,7 +305,7 @@ async def prepare_timer(ctx, seconds: int):
     except asyncio.CancelledError:
         pass  # タイマーがキャンセルされた場合は何もしない
     if debate_active:
-        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使うにゃー。")
+        await ctx.send("立論準備時間が終了したにゃー。")
         debate_active = False
 
 def create_embed(title, description):
