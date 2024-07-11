@@ -265,7 +265,7 @@ async def countdown(ctx, message, seconds: int):
                 remaining_time = 0
             embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {remaining_time}秒")
             await message.edit(embed=embed)
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.3)
             if remaining_time == 60:
                 await ctx.send("残り1分です。")
             elif remaining_time == 30:
@@ -289,7 +289,7 @@ async def prepare_timer(ctx, seconds: int):
     message = await ctx.send(embed=create_embed("立論準備", f"残り{seconds}秒"))
     try:
         while seconds > 0 and debate_active:
-            await asyncio.sleep(1)  # 1秒待機
+            await asyncio.sleep(0.3)
             elapsed_time = time.time() - start_time
             remaining_time = int(seconds - elapsed_time)
             if remaining_time <= 0:
