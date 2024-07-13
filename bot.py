@@ -183,14 +183,14 @@ async def show_topics(ctx):
 
 
 @bot.command(name='prepare')
-async def start(ctx):
+async def start(ctx, seconds: int):
     global countdown_task
     title = "立論準備"
     if countdown_task:
         countdown_task.cancel()
-    embed = create_embed(title, f"残り時間: {phase_times[current_phase_index]}秒")
+    embed = create_embed(title, f"残り時間: {seconds}秒")
     message = await ctx.send(embed=embed)
-    countdown_task = asyncio.create_task(countdown(ctx, message, phase_times[current_phase_index], title))
+    countdown_task = asyncio.create_task(countdown(ctx, message, seconds, title))
 
 @bot.command(name='start')
 async def start(ctx):
