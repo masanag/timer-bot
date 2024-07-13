@@ -311,6 +311,8 @@ async def countdown(ctx, message, seconds: int):
     except asyncio.CancelledError:
         pass  # タイマーがキャンセルされた場合は何もしない
     if debate_active:
+        if current_phase_index < len(phases) - 1:
+            current_phase_index += 1
         await ctx.send("フェーズが終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
         debate_active = False
 @bot.command()
