@@ -89,18 +89,22 @@ def get_help_message():
 @bot.command(name='names')
 async def set_names(ctx, affirmative: str, negative: str, randomize: str = None):
     global affirmative_name, negative_name
-    if randomize and randomize.lower() in ["1", "true", "yes", "y"]:
+    randomize_flag = randomize.lower() in ["1", "true", "yes", "y"] if randomize else False
+    if randomize_flag:
         names = [affirmative, negative]
         random.shuffle(names)
         affirmative_name, negative_name = names
     else:
         affirmative_name = affirmative
         negative_name = negative
-    await ctx.send(f"""
+
+    message = f"""
 # ディベート参加者:
 - 肯定側: {affirmative_name}
 - 否定側: {negative_name}
-""")
+""" + ("\n肯定側/否定側をランダムで決めたにゃー" if flag else "肯定側/否定側を順番どおりに設定したにゃー\nランダムにするには `!names <肯定側名> <否定側名> 1` と入力してくれにゃー")
+
+    await ctx.send(message)
 
 @bot.command(name='times', aliases=['t'])
 async def set_phase_times(ctx, *times: int):
