@@ -206,7 +206,7 @@ async def next_phase(ctx):
         description = phase_descriptions.get(phases[current_phase_index], "特定の説明はありません。")
         await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒\n{description}")
     else:
-        await ctx.send("これが最後のフェーズだったにゃー。\nresetするのは !end コマンドを使うにゃー")
+        await ctx.send("これが最後のフェーズだったにゃー。\nresetするには !end コマンドを使うにゃー")
 
 @bot.command(name='prev', aliases=['p'])
 async def previous_phase(ctx):
@@ -311,7 +311,7 @@ async def countdown(ctx, message, seconds: int):
     except asyncio.CancelledError:
         pass  # タイマーがキャンセルされた場合は何もしない
     if debate_active:
-        await ctx.send("フェーズが終了したにゃー。次のフェーズを開始するには !start コマンドを使うにゃー。")
+        await ctx.send("フェーズが終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
         debate_active = False
 @bot.command()
 async def prepare(ctx, seconds: int):
