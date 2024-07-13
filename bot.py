@@ -15,6 +15,16 @@ intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 phases = ["肯定側立論", "否定側反対尋問", "否定側立論", "肯定側反対尋問", "否定側反駁", "肯定側反駁", "否定側最終弁論", "肯定側最終弁論"]
+phase_descriptions = {
+    "肯定側立論": "肯定側立論フェーズでは、肯定側が自分の主張を提示します。",
+    "否定側反対尋問": "否定側反対尋問フェーズでは、否定側が肯定側の立論に対して質問を行います。",
+    "否定側立論": "否定側立論フェーズでは、否定側が自分の主張を提示します。",
+    "肯定側反対尋問": "肯定側反対尋問フェーズでは、肯定側が否定側の立論に対して質問を行います。",
+    "否定側反駁": "否定側反駁フェーズでは、否定側が肯定側の主張に対して反論を行います。",
+    "肯定側反駁": "肯定側反駁フェーズでは、肯定側が否定側の主張に対して反論を行います。",
+    "否定側最終弁論": "否定側最終弁論フェーズでは、否定側が自分の主張を再確認し、強調します。",
+    "肯定側最終弁論": "肯定側最終弁論フェーズでは、肯定側が自分の主張を再確認し、強調します。"
+}
 current_phase_index = 0
 debate_active = False
 countdown_task = None
@@ -193,7 +203,8 @@ async def next_phase(ctx):
         countdown_task.cancel()
     if current_phase_index < len(phases) - 1:
         current_phase_index += 1
-        await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒")
+        description = phase_descriptions.get(phases[current_phase_index], "特定の説明はありません。")
+        await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒\n{description}")
     else:
         await ctx.send("これが最後のフェーズだったにゃー。\nresetするのは !end コマンドを使うにゃー")
 
@@ -204,7 +215,8 @@ async def previous_phase(ctx):
         countdown_task.cancel()
     if current_phase_index > 0:
         current_phase_index -= 1
-        await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒")
+        description = phase_descriptions.get(phases[current_phase_index], "特定の説明はありません。")
+        await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒\n{description}")
 
     else:
         await ctx.send("これが最初のフェーズだにゃー")
