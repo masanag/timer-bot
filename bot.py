@@ -193,9 +193,9 @@ async def next_phase(ctx):
         countdown_task.cancel()
     if current_phase_index < len(phases) - 1:
         current_phase_index += 1
-        await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
+        await ctx.send(f"次のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒")
     else:
-        await ctx.send("これが最後のフェーズだにゃー")
+        await ctx.send("これが最後のフェーズだったにゃー。\nresetするのは !end コマンドを使うにゃー")
 
 @bot.command(name='prev', aliases=['p'])
 async def previous_phase(ctx):
@@ -204,7 +204,8 @@ async def previous_phase(ctx):
         countdown_task.cancel()
     if current_phase_index > 0:
         current_phase_index -= 1
-        await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()}")
+        await ctx.send(f"前のフェーズ: {phases[current_phase_index]} - {get_current_speaker()} - {phase_times[current_phase_index]}秒")
+
     else:
         await ctx.send("これが最初のフェーズだにゃー")
 
