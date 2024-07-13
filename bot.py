@@ -59,6 +59,7 @@ def get_help_message():
     - `!p, !prev` - 前のフェーズに戻ります。
     - `!end` - ディベートを終了します。
     - `!settings` - 現在の設定を表示します。
+    - `!chart` - ディベートのフェーズチャートを表示します。
     - `!f, !flow` - ディベートの全体の流れを表示します。
     - `!c, !current` - 現在のフェーズを表示します。
     - `!st, !topics, !tp, !suggest` - ランダムに5つの論題を提案します。
@@ -226,6 +227,23 @@ async def show_settings(ctx):
   - 最終弁論: {phase_times[6]}秒
 """
     await ctx.send(settings_message)
+
+@bot.command(name='chart')
+async def show_chart(ctx):
+    chart_message = f"""
+1st
+①肯定側：立論      →  ②否定側：反対尋問
+                                                    ↓
+2nd
+④肯定側：反対尋問  ←  ③否定側：立論
+                                    ↘
+3rd
+⑥肯定側：反駁      ←  ⑤否定側：反駁
+                                    ↘
+4th
+⑧肯定側：最終弁論  ←  ⑦否定側：最終弁論
+    """
+    await ctx.send(chart_message)
 
 @bot.command(name='flow', aliases=['f'])
 async def show_flow(ctx):
