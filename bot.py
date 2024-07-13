@@ -78,6 +78,7 @@ def get_help_message():
 - `!n, !next` - フェーズのタイマーを止めて次のフェーズに進みます。
 - `!p, !prev` - フェーズのタイマーを止めて前のフェーズに戻ります。
 - `!end` - フェーズのタイマーを止めて最初のフェーズに戻ります。
+- `!cancel` - カウントダウンタスクをキャンセルします。
 ### フェーズ全体表示
 - `!chart` - ディベートのフェーズチャートを表示します。
 - `!f, !flow` - ディベートの全体の流れを表示します。
@@ -329,6 +330,16 @@ async def countdown(ctx, message, seconds: int, title: str = None):
         await ctx.send(f"{title if title else 'フェーズ'}が終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
 
         debate_active = False
+
+@bot.command(name='cancel')
+async def cancel_task(ctx):
+    global countdown_task
+    if countdown_task:
+        countdown_task.cancel()
+        countdown_task = None
+        await ctx.send("カウントダウンタスクがキャンセルされたにゃー")
+    else:
+        await ctx.send("現在アクティブなカウントダウンタスクはないにゃー")
 
 def create_embed(title, description):
     embed = discord.Embed(title=title, description=description, color=discord.Color.blue())
