@@ -177,6 +177,16 @@ async def show_topics(ctx):
             await ctx.send("論題がありません。")
 
 
+@bot.command(name='prepare')
+async def start(ctx):
+    global countdown_task
+    title = "立論準備"
+    if countdown_task:
+        countdown_task.cancel()
+    embed = create_embed(title, f"残り時間: {phase_times[current_phase_index]}秒")
+    message = await ctx.send(embed=embed)
+    countdown_task = asyncio.create_task(countdown(ctx, message, phase_times[current_phase_index], title))
+
 @bot.command(name='start')
 async def start(ctx):
     global current_phase_index, debate_active, countdown_task
@@ -290,7 +300,7 @@ def get_current_speaker():
     else:
         return negative_name
 
-async def countdown(ctx, message, seconds: int):
+async def countdown(ctx, message, seconds: int, title: str = None):
     global current_phase_index, debate_active
     start_time = time.time()
     try:
@@ -299,7 +309,10 @@ async def countdown(ctx, message, seconds: int):
             remaining_time = int(seconds - elapsed_time)
             if remaining_time <= 0:
                 remaining_time = 0
-            embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {remaining_time}秒")
+            if title:
+                embed = create_embed(title, f"残り時間: {remaining_time}秒")
+            else:
+                embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {remaining_time}秒")
             await message.edit(embed=embed)
             await asyncio.sleep(1)
             if remaining_time == 60:
@@ -313,37 +326,8 @@ async def countdown(ctx, message, seconds: int):
     if debate_active:
         if current_phase_index < len(phases) - 1:
             current_phase_index += 1
-        await ctx.send("フェーズが終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
-        debate_active = False
-@bot.command()
-async def prepare(ctx, seconds: int):
-    # prepare_timer関数を呼び出す
-    await prepare_timer(ctx, seconds)
+        await ctx.send(f"{title if title else 'フェーズ'}が終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
 
-async def prepare_timer(ctx, seconds: int):
-    global current_phase_index, debate_active
-    debate_active = True  # debate_activeをTrueに設定
-    start_time = time.time()
-    message = await ctx.send(embed=create_embed("立論準備", f"残り{seconds}秒"))
-    try:
-        while seconds > 0 and debate_active:
-            await asyncio.sleep(1)
-            elapsed_time = time.time() - start_time
-            remaining_time = int(seconds - elapsed_time)
-            if remaining_time <= 0:
-                remaining_time = 0
-            embed = create_embed(f"立論準備", f"残り時間: {remaining_time}秒")
-            await message.edit(embed=embed)
-            if remaining_time == 60:
-                await ctx.send("残り1分です。")
-            elif remaining_time == 30:
-                await ctx.send("残り30秒です。")
-            if remaining_time <= 0:
-                break
-    except asyncio.CancelledError:
-        pass  # タイマーがキャンセルされた場合は何もしない
-    if debate_active:
-        await ctx.send("立論準備時間が終了したにゃー。")
         debate_active = False
 
 def create_embed(title, description):
