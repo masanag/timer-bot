@@ -102,7 +102,7 @@ async def set_names(ctx, affirmative: str, negative: str, randomize: str = None)
 # ディベート参加者:
 - 肯定側: {affirmative_name}
 - 否定側: {negative_name}
-""" + ("\n肯定側/否定側をランダムで決めたにゃー" if flag else "肯定側/否定側を順番どおりに設定したにゃー\nランダムにするには `!names <肯定側名> <否定側名> 1` と入力してくれにゃー")
+""" + ("\n肯定側/否定側をランダムで決めたにゃー\n順番指定で決めたい場合は`names  <肯定側名> <否定側名>` のように入力してくれにゃー" if randomize_flag else "肯定側/否定側を順番どおりに設定したにゃー\nランダムにするには `!names <肯定側名> <否定側名> 1` のように第3引数に 1 を入力してくれにゃー")
 
     await ctx.send(message)
 
