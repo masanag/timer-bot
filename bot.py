@@ -195,7 +195,7 @@ async def prepare(ctx, seconds: int):
 @bot.command(name='start')
 async def start(ctx):
     global current_phase_index, debate_active, countdown_task
-    if debate_active and countdown_task:
+    if countdown_task:
         countdown_task.cancel()
     debate_active = True
     embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {phase_times[current_phase_index]}秒")
