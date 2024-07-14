@@ -213,6 +213,10 @@ async def stop(ctx):
             countdown_task.cancel()
             countdown_task = None
         await ctx.send("フェーズが中断されました。現在のフェーズを最初から開始するには !start コマンドを使用してください。次のフェーズに進むには !next コマンドを使用してください。")
+    elif countdown_task:
+        countdown_task.cancel()
+        countdown_task = None
+        await ctx.send("タイマーが中断されました。")
 
 @bot.command(name='next', aliases=['n'])
 async def next_phase(ctx):
@@ -314,6 +318,7 @@ def get_current_speaker():
 async def countdown(ctx, message, seconds: int, title: str = None):
     global current_phase_index, debate_active
     start_time = time.time()
+    await ctx.send("タイマーを止める場合は `!cancel` コマンドを使用してください。")
     try:
         while seconds > 0 and (debate_active or title):
             elapsed_time = time.time() - start_time
