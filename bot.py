@@ -331,9 +331,10 @@ async def countdown(ctx, message, seconds: int, title: str = None):
     if debate_active:
         if current_phase_index < len(phases) - 1:
             current_phase_index += 1
-        await ctx.send(f"{title if title else 'フェーズ'}が終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
-
+        await ctx.send(f"フェーズが終了したにゃー。\n次のフェーズを開始するには !start コマンドを使うにゃー。\nフェーズをリセットするには !end コマンドを使うにゃー")
         debate_active = False
+    elif title:
+        await ctx.send(f"{title}が終了したにゃー。\n")
 
 @bot.command(name='cancel')
 async def cancel_task(ctx):
