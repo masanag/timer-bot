@@ -183,7 +183,7 @@ async def show_topics(ctx):
 
 
 @bot.command(name='prepare')
-async def start(ctx, seconds: int):
+async def prepare(ctx, seconds: int):
     global countdown_task
     title = "立論準備"
     if countdown_task:
@@ -309,7 +309,7 @@ async def countdown(ctx, message, seconds: int, title: str = None):
     global current_phase_index, debate_active
     start_time = time.time()
     try:
-        while seconds > 0 and debate_active:
+        while seconds > 0 and (debate_active or title):
             elapsed_time = time.time() - start_time
             remaining_time = int(seconds - elapsed_time)
             if remaining_time <= 0:
