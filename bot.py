@@ -188,6 +188,7 @@ async def prepare(ctx, seconds: int):
     title = "立論準備"
     if countdown_task:
         countdown_task.cancel()
+        countdown_task = None
     embed = create_embed(title, f"残り時間: {seconds}秒")
     message = await ctx.send(embed=embed)
     countdown_task = asyncio.create_task(countdown(ctx, message, seconds, title))
@@ -197,6 +198,7 @@ async def start(ctx):
     global current_phase_index, debate_active, countdown_task
     if countdown_task:
         countdown_task.cancel()
+        countdown_task = None
     debate_active = True
     embed = create_embed(f"フェーズ: {phases[current_phase_index]} - {get_current_speaker()}", f"残り時間: {phase_times[current_phase_index]}秒")
     message = await ctx.send(embed=embed)
@@ -209,6 +211,7 @@ async def stop(ctx):
         debate_active = False
         if countdown_task:
             countdown_task.cancel()
+            countdown_task = None
         await ctx.send("フェーズが中断されました。現在のフェーズを最初から開始するには !start コマンドを使用してください。次のフェーズに進むには !next コマンドを使用してください。")
 
 @bot.command(name='next', aliases=['n'])
@@ -216,6 +219,7 @@ async def next_phase(ctx):
     global current_phase_index, countdown_task
     if countdown_task:
         countdown_task.cancel()
+        countdown_task = None
     if current_phase_index < len(phases) - 1:
         current_phase_index += 1
         description = phase_descriptions.get(phases[current_phase_index], "特定の説明はありません。")
@@ -228,6 +232,7 @@ async def previous_phase(ctx):
     global current_phase_index, countdown_task
     if countdown_task:
         countdown_task.cancel()
+        countdown_task = None
     if current_phase_index > 0:
         current_phase_index -= 1
         description = phase_descriptions.get(phases[current_phase_index], "特定の説明はありません。")
@@ -241,6 +246,7 @@ async def end_debate(ctx):
     global current_phase_index, debate_active, countdown_task
     if countdown_task:
         countdown_task.cancel()
+        countdown_task = None
     debate_active = False
     current_phase_index = 0
     await ctx.send("ディベートが終了したにゃー")
