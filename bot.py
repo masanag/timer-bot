@@ -172,14 +172,21 @@ async def remove_topic(ctx, *, topic):
 
 @bot.command(name='showtopics', aliases=['alltopics', 'listtopics'])
 async def show_topics(ctx):
-    with open('topics.json', 'r') as file:
-        data = json.load(file)
-        topics = data['topics']
-        if topics:
-            topics_list = '\n'.join(f"- {topic}" for topic in topics)
-            await ctx.send(f"# 論題リスト:\n{topics_list}")
-        else:
-            await ctx.send("論題がありません。")
+    try:
+        with open('topics.json', 'r') as file:
+            data = json.load(file)
+            topics = data['topics']
+            if topics:
+                # メッセージを複数に分割して送信
+                chunk_size = 1900  # 安全のために2000未満のサイズを指定
+                topics_list = '\n'.join(f"- {topic}" for topic in topics)
+                for i in range(0, len(topics_list), chunk_size):
+                    await ctx.send(topics_list[i:i + chunk_size])
+            else:
+                await ctx.send("論題がありません。")
+    except Exception as e:
+        logging.error(f"Error occurred in showtopics command: {str(e)}")
+        await ctx.send("論題を表示中にエラーが発生しました。")
 
 
 @bot.command(name='prepare')
